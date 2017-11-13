@@ -1,0 +1,464 @@
+[
+    {
+        "id": "48b21017.2d0c6",
+        "type": "ibmiot in",
+        "z": "2184049f.27eeec",
+        "authentication": "apiKey",
+        "apiKey": "94c8c2e2.512d08",
+        "inputType": "evt",
+        "deviceId": "b827eb9daa28",
+        "applicationId": "",
+        "deviceType": "+",
+        "eventType": "workload-sched",
+        "commandType": "",
+        "format": "json",
+        "name": "TJBot IoT - workload-sched",
+        "service": "registered",
+        "allDevices": false,
+        "allApplications": "",
+        "allDeviceTypes": true,
+        "allEvents": false,
+        "allCommands": "",
+        "allFormats": true,
+        "qos": 0,
+        "x": 160,
+        "y": 345,
+        "wires": [
+            [
+                "7e9ccbd9.b691bc"
+            ]
+        ]
+    },
+    {
+        "id": "7e9ccbd9.b691bc",
+        "type": "function",
+        "z": "2184049f.27eeec",
+        "name": "Extract Data",
+        "func": "//Extract data and compose message\nvar messageText = msg.payload.jobname \n\nmessageText = \"The job \" + msg.payload.jobname + \" abended with return code \" + msg.payload.jobrc;\n\nmsg.messageText = messageText;\nmsg.color = \"Red\";\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 370,
+        "y": 345,
+        "wires": [
+            [
+                "2feda6a8.adbff2"
+            ]
+        ]
+    },
+    {
+        "id": "c608debe.ab776",
+        "type": "comment",
+        "z": "2184049f.27eeec",
+        "name": "IBM workload Scheduler",
+        "info": "",
+        "x": 150,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "6bf2bbd.f7142c4",
+        "type": "template",
+        "z": "2184049f.27eeec",
+        "name": "Send color",
+        "field": "color",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{{color}}",
+        "x": 730,
+        "y": 220,
+        "wires": [
+            [
+                "f7325937.d7286"
+            ]
+        ]
+    },
+    {
+        "id": "c626d98a.0d95b8",
+        "type": "speakerpi-output",
+        "z": "2184049f.27eeec",
+        "choose": "filebased",
+        "filename": "/home/pi/temp/speech.wav",
+        "channels": "2",
+        "bitdepth": "16",
+        "samplerate": "22050",
+        "name": "",
+        "x": 1160,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "23f33ce8.af8e1c",
+        "type": "watson-text-to-speech",
+        "z": "2184049f.27eeec",
+        "name": "",
+        "lang": "en-US",
+        "langhidden": "en-US",
+        "langcustom": "NoCustomisationSetting",
+        "langcustomhidden": "",
+        "voice": "en-US_MichaelVoice",
+        "voicehidden": "en-US_MichaelVoice",
+        "format": "audio/wav",
+        "password": "OLWPmq38aILF",
+        "x": 940,
+        "y": 160,
+        "wires": [
+            [
+                "c626d98a.0d95b8"
+            ]
+        ]
+    },
+    {
+        "id": "4004a01a.a3b13",
+        "type": "rpi-neopixels",
+        "z": "2184049f.27eeec",
+        "name": "",
+        "pixels": "1",
+        "bgnd": "",
+        "fgnd": "",
+        "wipe": "40",
+        "mode": "pixels",
+        "rgb": "grb",
+        "x": 1190,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "f7325937.d7286",
+        "type": "trigger",
+        "z": "2184049f.27eeec",
+        "op1": "Red",
+        "op2": "Black",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "5",
+        "extend": true,
+        "units": "s",
+        "reset": "",
+        "name": "Warning Led",
+        "x": 930,
+        "y": 220,
+        "wires": [
+            [
+                "4004a01a.a3b13"
+            ]
+        ]
+    },
+    {
+        "id": "7fa35c88.374ff4",
+        "type": "twilio out",
+        "z": "2184049f.27eeec",
+        "twilio": "d5f095f.3687768",
+        "twilioType": "sms",
+        "url": "http://twimlets.com/message?Message=Hello,%20you%20have%20an%20incident%20on%20your%20queue,%20please%20take%20the%20necessary%20action.%20Hello,%20you%20have%20an%20incident%20on%20your%20queue,%20please%20take%20the%20necessary%20action.",
+        "number": "+55 19 99684 4926",
+        "name": "sms job abend",
+        "x": 940,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "463ea124.3a9b5",
+        "type": "twilio out",
+        "z": "2184049f.27eeec",
+        "twilio": "d5f095f.3687768",
+        "twilioType": "call",
+        "url": "http://twimlets.com/message?Message=Hello,%20you%20have%20an%20incident%20on%20your%20queue,%20please%20take%20the%20necessary%20action.%20Hello,%20you%20have%20an%20incident%20on%20your%20queue,%20please%20take%20the%20necessary%20action.",
+        "number": "+55 19 99684 4926",
+        "name": "call job abend",
+        "x": 940,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "ebf575ea.58fd1",
+        "type": "trigger",
+        "z": "2184049f.27eeec",
+        "op1": "20",
+        "op2": "10",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "0.5",
+        "extend": false,
+        "units": "s",
+        "reset": "",
+        "name": "",
+        "x": 930,
+        "y": 280,
+        "wires": [
+            [
+                "59183a5a.fc4c24"
+            ]
+        ]
+    },
+    {
+        "id": "32663664.836552",
+        "type": "trigger",
+        "z": "2184049f.27eeec",
+        "op1": "",
+        "op2": "20",
+        "op1type": "nul",
+        "op2type": "str",
+        "duration": "1",
+        "extend": false,
+        "units": "s",
+        "reset": "",
+        "name": "",
+        "x": 920,
+        "y": 320,
+        "wires": [
+            [
+                "59183a5a.fc4c24"
+            ]
+        ]
+    },
+    {
+        "id": "3a0205b8.28f402",
+        "type": "trigger",
+        "z": "2184049f.27eeec",
+        "op1": "",
+        "op2": "0",
+        "op1type": "nul",
+        "op2type": "str",
+        "duration": "2.5",
+        "extend": false,
+        "units": "s",
+        "reset": "",
+        "name": "",
+        "x": 930,
+        "y": 360,
+        "wires": [
+            [
+                "59183a5a.fc4c24"
+            ]
+        ]
+    },
+    {
+        "id": "59183a5a.fc4c24",
+        "type": "rpi-gpio out",
+        "z": "2184049f.27eeec",
+        "name": "Servo",
+        "pin": "29",
+        "set": false,
+        "level": "0",
+        "out": "pwm",
+        "x": 1210,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "1212b7d7.64de98",
+        "type": "delay",
+        "z": "2184049f.27eeec",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "0",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 716.4286804199219,
+        "y": 317,
+        "wires": [
+            [
+                "ebf575ea.58fd1",
+                "32663664.836552",
+                "3a0205b8.28f402"
+            ]
+        ]
+    },
+    {
+        "id": "2feda6a8.adbff2",
+        "type": "exec",
+        "z": "2184049f.27eeec",
+        "command": "raspistill -o /usr/lib/node_modules/node-red/public/image1.jpg -w 1024 -h 768 -q 25",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "",
+        "timer": "",
+        "name": "capture",
+        "x": 98,
+        "y": 408,
+        "wires": [
+            [
+                "26f511a3.68fc46"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "85e937b1.cc0238",
+        "type": "delay",
+        "z": "2184049f.27eeec",
+        "name": "delay",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 362,
+        "y": 414,
+        "wires": [
+            [
+                "7a496998.e3bd3"
+            ]
+        ]
+    },
+    {
+        "id": "26f511a3.68fc46",
+        "type": "template",
+        "z": "2184049f.27eeec",
+        "name": "click",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "click!",
+        "x": 242,
+        "y": 414,
+        "wires": [
+            [
+                "85e937b1.cc0238"
+            ]
+        ]
+    },
+    {
+        "id": "7a496998.e3bd3",
+        "type": "file in",
+        "z": "2184049f.27eeec",
+        "name": "image",
+        "filename": "/usr/lib/node_modules/node-red/public/image1.jpg",
+        "format": "",
+        "x": 482,
+        "y": 414,
+        "wires": [
+            [
+                "82b0ef38.55d448"
+            ]
+        ]
+    },
+    {
+        "id": "82b0ef38.55d448",
+        "type": "function",
+        "z": "2184049f.27eeec",
+        "name": "convert-img",
+        "func": " msg.headers = {\n \"Content-Type\":\"image/jpeg\"\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 622,
+        "y": 414,
+        "wires": [
+            [
+                "43460576.9d6a54"
+            ]
+        ]
+    },
+    {
+        "id": "43460576.9d6a54",
+        "type": "visual-recognition-v3",
+        "z": "2184049f.27eeec",
+        "name": "visual api",
+        "apikey": "",
+        "image-feature": "detectFaces",
+        "lang": "en",
+        "x": 772,
+        "y": 414,
+        "wires": [
+            [
+                "2cb41a7f.f643a6"
+            ]
+        ]
+    },
+    {
+        "id": "2cb41a7f.f643a6",
+        "type": "switch",
+        "z": "2184049f.27eeec",
+        "name": "have ops",
+        "property": "result.images[0].faces[0]",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 932,
+        "y": 414,
+        "wires": [
+            [
+                "a397951c.66f558",
+                "6bf2bbd.f7142c4",
+                "1212b7d7.64de98"
+            ],
+            [
+                "ebdc56c9.9879f8"
+            ]
+        ]
+    },
+    {
+        "id": "a397951c.66f558",
+        "type": "function",
+        "z": "2184049f.27eeec",
+        "name": "text-to-speech",
+        "func": "msg.payload = msg.messageText;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 740,
+        "y": 160,
+        "wires": [
+            [
+                "23f33ce8.af8e1c"
+            ]
+        ]
+    },
+    {
+        "id": "ebdc56c9.9879f8",
+        "type": "function",
+        "z": "2184049f.27eeec",
+        "name": "call out",
+        "func": "msg.payload = msg.messageText;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 716,
+        "y": 494,
+        "wires": [
+            [
+                "7fa35c88.374ff4",
+                "463ea124.3a9b5"
+            ]
+        ]
+    },
+    {
+        "id": "94c8c2e2.512d08",
+        "type": "ibmiot",
+        "z": "",
+        "name": "my-tjbot",
+        "keepalive": "60",
+        "domain": "",
+        "cleansession": true,
+        "appId": "",
+        "shared": false
+    },
+    {
+        "id": "d5f095f.3687768",
+        "type": "twilio-api",
+        "z": "",
+        "sid": "AC686ae5ff1ebc997950b6cbcb8f3fb0d4",
+        "from": "+1 760-314-4129 ",
+        "name": "twilio"
+    }
+]
